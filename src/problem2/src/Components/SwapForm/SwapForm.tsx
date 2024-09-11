@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react';
-import axios from 'axios';
 import './SwapForm.scss';
 import Spinner from '../Spinner/Spinner';
 import { FaChevronDown, FaChevronUp } from 'react-icons/fa';
+import { getTokens } from '../Api';
 
 interface Token {
   symbol: string;
@@ -10,14 +10,13 @@ interface Token {
   name: string;
 }
 
-const API_URL = 'https://interview.switcheo.com/prices.json';
 const IMAGE_URL = 'https://raw.githubusercontent.com/Switcheo/token-icons/main/tokens/';
 
 const SwapForm: React.FC = () => {
   const [tokens, setTokens] = useState<Token[]>([]);
   const [selectedFromToken, setSelectedFromToken] = useState<Token | null>(null);
   const [selectedToToken, setSelectedToToken] = useState<Token | null>(null);
-  const [amount, setAmount] = useState<number | ''>(''); 
+  const [amount, setAmount] = useState<number | ''>('');
   const [result, setResult] = useState<number | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [showFromList, setShowFromList] = useState<boolean>(false);
@@ -28,18 +27,9 @@ const SwapForm: React.FC = () => {
   const [loading, setLoading] = useState<boolean>(false);
 
   useEffect(() => {
-    axios.get(API_URL)
-      .then(response => {
-        const tokenList = Object.keys(response.data).map(key => ({
-          symbol: key,
-          price: response.data[key].price,
-          name: response.data[key].currency || key,
-        }));
-
-        const uniqueTokens = Array.from(new Map(tokenList.map(token => [token.name, token])).values());
-        setTokens(uniqueTokens);
-      })
-      .catch(err => setError('Failed to load token prices.'));
+    getTokens()
+      .then(tokenList => setTokens(tokenList))
+      .catch(err => setError(err.message));
   }, []);
 
   const handleSwap = () => {
@@ -57,7 +47,7 @@ const SwapForm: React.FC = () => {
         const exchangeRate = toPrice / fromPrice;
         setResult(Number(amount) * exchangeRate);
         setLoading(false);
-      }, 1000); 
+      }, 1000);
     } else {
       setError('Please fill in all fields.');
     }
@@ -115,7 +105,7 @@ const SwapForm: React.FC = () => {
                 <>
                   Select Token
                   <span className="dropdown-icon">
-                    {showFromList ? <FaChevronUp /> : <FaChevronDown />} {}
+                    {showFromList ? <FaChevronUp /> : <FaChevronDown />}
                   </span>
                 </>
               )}
@@ -152,7 +142,7 @@ const SwapForm: React.FC = () => {
                 <>
                   Select Token
                   <span className="dropdown-icon">
-                    {showToList ? <FaChevronUp /> : <FaChevronDown />} {}
+                    {showToList ? <FaChevronUp /> : <FaChevronDown />}
                   </span>
                 </>
               )}

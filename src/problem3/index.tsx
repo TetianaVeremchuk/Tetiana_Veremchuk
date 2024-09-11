@@ -1,9 +1,11 @@
-// This code uses stubs/mock implementations for useWalletBalances, usePrices, useMemo, WalletRow, and classes 
+// This code uses stubs/mock implementations for useWalletBalances, usePrices, WalletRow, and classes 
 // instead of actual imports. These are placeholders for the purpose of this task and should be replaced with real imports in a production environment.
+
+import React, { useMemo } from 'react';
 
 interface BoxProps {
   className?: string;
-  style?: {};
+  style?: React.CSSProperties;
 }
 
 const useWalletBalances = () => {
@@ -24,12 +26,8 @@ const usePrices = () => {
   };
 };
 
-const useMemo = (fn: Function, deps: any[]) => {
-  return fn();
-};
-
-const WalletRow = (props: any) => {
-  return <div>{/* Content */}</div>;
+const WalletRow: React.FC<{ amount: number; usdValue: number; formattedAmount: string; className: string }> = ({ amount, usdValue, formattedAmount, className }) => {
+  return <div className={className}>{/* Content */}</div>;
 };
 
 const classes = {
@@ -46,48 +44,46 @@ interface FormattedWalletBalance extends WalletBalance {
   formatted: string;
 }
 
-const WalletPage = (props: BoxProps) => {
-  const { ...rest } = props;
+const getPriority = (blockchain: string): number => {
+  const priorities: { [key: string]: number } = {
+    'Osmosis': 100,
+    'Ethereum': 50,
+    'Arbitrum': 30,
+    'Zilliqa': 20,
+    'Neo': 20,
+  };
+  return priorities[blockchain] || -99;
+};
+
+const filterAndSortBalances = (balances: WalletBalance[]): WalletBalance[] => {
+  return balances
+    .filter(balance => getPriority(balance.blockchain) > -99 && balance.amount > 0)
+    .sort((lhs, rhs) => getPriority(rhs.blockchain) - getPriority(lhs.blockchain));
+};
+
+const formatBalances = (balances: WalletBalance[]): FormattedWalletBalance[] => {
+  return balances.map(balance => ({
+    ...balance,
+    formatted: balance.amount.toFixed(),
+  }));
+};
+
+const WalletPage: React.FC<BoxProps> = (props) => {
+  const { className, style } = props;
   const balances = useWalletBalances();
   const prices = usePrices();
 
-  const getPriority = (blockchain: string): number => {
-    switch (blockchain) {
-      case 'Osmosis':
-        return 100;
-      case 'Ethereum':
-        return 50;
-      case 'Arbitrum':
-        return 30;
-      case 'Zilliqa':
-        return 20;
-      case 'Neo':
-        return 20;
-      default:
-        return -99;
-    }
-  };
-
   const sortedAndFormattedBalances = useMemo(() => {
-    return balances
-      .filter((balance: WalletBalance) => 
-        getPriority(balance.blockchain) > -99 && balance.amount > 0
-      )
-      .sort((lhs: WalletBalance, rhs: WalletBalance) => 
-        getPriority(rhs.blockchain) - getPriority(lhs.blockchain)
-      )
-      .map((balance: WalletBalance) => ({
-        ...balance,
-        formatted: balance.amount.toFixed(),
-      }));
+    const filteredAndSortedBalances = filterAndSortBalances(balances);
+    return formatBalances(filteredAndSortedBalances);
   }, [balances]);
 
-  const rows = sortedAndFormattedBalances.map((balance: FormattedWalletBalance) => {
+  const rows = sortedAndFormattedBalances.map((balance) => {
     const usdValue = prices[balance.currency] * balance.amount;
     return (
       <WalletRow 
         className={classes.row}
-        key={`${balance.currency}-${balance.blockchain}`} 
+        key={`${balance.currency}-${balance.blockchain}`}
         amount={balance.amount}
         usdValue={usdValue}
         formattedAmount={balance.formatted}
@@ -96,8 +92,10 @@ const WalletPage = (props: BoxProps) => {
   });
 
   return (
-    <div {...rest}>
+    <div className={className} style={style}>
       {rows}
     </div>
   );
 };
+
+export default WalletPage;

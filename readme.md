@@ -6,9 +6,10 @@
 The goal of this task was to provide three unique implementations of a function that calculates the summation of all integers from 1 to a given integer `n`. The function ensures that the input is an integer that will produce a result lesser than `Number.MAX_SAFE_INTEGER`.
 
 ### Implementations
-1. Iterative approach using a loop.
-2. Mathematical formula to calculate the sum.
-3. Recursive approach to achieve the same result.
+1. Iterative approach using a loop `while`.
+2. Iterative approach using a loop `for`.
+3. Mathematical formula to calculate the sum.
+4. Recursive approach to achieve the same result.
 
 ## Task 2: Swap Token Application
 
@@ -36,7 +37,7 @@ You can view the live demo of the Swap Token Application [DEMO](https://tetianav
 ## Task 3: Computational Inefficiencies in React Code
 
 ### Identified Issues
-1. **Inefficient useMemo Usage**: The `sortedBalances` computation within `useMemo` is inefficient because it combines filtering and sorting in one step, making the logic complex and hard to maintain. Additionally, `prices` аre included in the `useMemo` dependencies, even though they are not used in computing `sortedBalances`, which can cause unnecessary recomputation when prices change.
+1. **Inefficient useMemo Usage**: The `sortedBalances` computation within `useMemo` is inefficient because it combines filtering and sorting in one step, making the logic complex and hard to maintain. Additionally, `prices` are included in the `useMemo` dependencies, even though they are not used in computing `sortedBalances`, which can cause unnecessary recomputation when prices change.
 
 2. **Suboptimal Filtering and Sorting**: The filter logic checks if `balance.amount` is less than or equal to 0, which contradicts the purpose of `sortedBalances`. If the amount is zero or negative, it should ideally not be included in the sorted balances. Filtering and sorting could be combined more efficiently, reducing overall complexity.
 
