@@ -31,12 +31,12 @@ Swap Token Application is a web application for exchanging cryptocurrencies, whe
 - **Error Handling**: Displays errors if any fields are left empty or if data loading from the API fails.
 
 ### Demo
-You can view the live demo of the Swap Token Application [DEMO](https://TetianaVeremchuk.github.io/TetianaVeremchuk/).
+You can view the live demo of the Swap Token Application [DEMO](https://tetianaveremchuk.github.io/Tetiana_Veremchuk/).
 
 ## Task 3: Computational Inefficiencies in React Code
 
 ### Identified Issues
-1. **Inefficient useMemo Usage**: The `sortedBalances` computation within `useMemo` is inefficient because it combines filtering and sorting in one step, making the logic complex and hard to maintain. Additionally, `prices` are included in the `useMemo` dependencies, even though they are not used in computing `sortedBalances`, which can cause unnecessary recomputation when prices change.
+1. **Inefficient useMemo Usage**: The `sortedBalances` computation within `useMemo` is inefficient because it combines filtering and sorting in one step, making the logic complex and hard to maintain. Additionally, `prices` аre included in the `useMemo` dependencies, even though they are not used in computing `sortedBalances`, which can cause unnecessary recomputation when prices change.
 
 2. **Suboptimal Filtering and Sorting**: The filter logic checks if `balance.amount` is less than or equal to 0, which contradicts the purpose of `sortedBalances`. If the amount is zero or negative, it should ideally not be included in the sorted balances. Filtering and sorting could be combined more efficiently, reducing overall complexity.
 
