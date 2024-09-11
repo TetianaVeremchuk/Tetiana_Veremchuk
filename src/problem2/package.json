@@ -25,6 +25,7 @@
     "predeploy": "npm run build",
     "deploy": "gh-pages -d build"
   },
+  "homepage": "https://tetianaveremchuk.github.io/Tetiana_Veremchuk/",
   "eslintConfig": {
     "extends": [
       "react-app",
